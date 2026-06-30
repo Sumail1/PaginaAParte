@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quieres salir conmigo? 💖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem 2rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(233, 30, 99, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            border: 2px solid #f06292;
+            animation: fadeIn 1.5s ease;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(233, 30, 99, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ad1457;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .heart-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        .btn-yes {
+            background: #e91e63;
+            color: white;
+        }
+
+        .btn-yes:hover {
+            background: #c2185b;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+        }
+
+        .btn-no {
+            background: #b0bec5;
+            color: #37474f;
+            position: relative;
+        }
+
+        .btn-no:hover {
+            background: #90a4ae;
+        }
+
+        /* Mensaje de éxito */
+        .success-message {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #fce4ec;
+            border-radius: 20px;
+            border: 2px solid #e91e63;
+            animation: bounceIn 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-message h2 {
+            color: #d81b60;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message p {
+            color: #880e4f;
+            font-size: 1.2rem;
+        }
+
+        /* Confeti / corazones flotantes (fondo) */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatUp 8s linear infinite;
+            opacity: 0.6;
+            color: #e91e63;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            h1 { font-size: 2rem; }
+            .btn { font-size: 1.2rem; padding: 0.8rem 1.8rem; }
+            .buttons { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Corazones flotantes de fondo -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <div class="container" id="mainContainer">
+        <span class="heart-icon">💖</span>
+        <h1>¿Quieres salir conmigo?</h1>
+        <p class="subtitle">:3✨</p>
+
+        <div class="buttons" id="buttonGroup">
+            <button class="btn btn-yes" id="btnYes">¡Sí! 😍</button>
+            <button class="btn btn-no" id="btnNo">No 😅</button>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h2>¡Sabía que dirías que sí! 🥳</h2>
+            <p>Te espero el sábado a las 3pm 💕<br>Para ir al cine a ver la pelicula que dijimos</p>
+            <p style="font-size: 2rem; margin-top: 0.5rem;">💑💘</p>
+        </div>
+    </div>
+
+    <script>
+        // Generar corazones flotantes
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const emojis = ['❤️', '💕', '💖', '💗', '💘', '💝'];
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                heart.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(heart);
+            }
+        }
+        createFloatingHearts();
+
+        // Lógica de los botones
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const successMessage = document.getElementById('successMessage');
+        const buttonGroup = document.getElementById('buttonGroup');
+
+        // Cuando hace clic en "Sí"
+        btnYes.addEventListener('click', function() {
+            buttonGroup.style.display = 'none';
+            successMessage.style.display = 'block';
+            // Confeti improvisado con más corazones
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.textContent = '💖';
+                    heart.style.position = 'fixed';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.top = '-10%';
+                    heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.zIndex = '999';
+                    heart.style.transition = 'all 4s ease';
+                    document.body.appendChild(heart);
+                    setTimeout(() => {
+                        heart.style.top = '110%';
+                        heart.style.left = (Math.random() * 100) + '%';
+                        heart.style.transform = 'rotate(' + (Math.random() * 720) + 'deg)';
+                    }, 100);
+                    setTimeout(() => heart.remove(), 5000);
+                }, i * 100);
+            }
+        });
+
+        // Cuando hace clic en "No" → el botón huye
+        btnNo.addEventListener('mouseenter', function() {
+            // El botón se mueve a una posición aleatoria dentro del contenedor
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            const btnRect = btnNo.getBoundingClientRect();
+            
+            // Evitar que se salga del contenedor
+            const maxX = containerRect.width - btnRect.width - 20;
+            const maxY = containerRect.height - btnRect.height - 20;
+            
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            
+            btnNo.style.position = 'absolute';
+            btnNo.style.left = newX + 'px';
+            btnNo.style.top = newY + 'px';
+        });
+
+        // También al hacer clic en "No" se mueve
+        btnNo.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Lo movemos de nuevo
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            const btnRect = btnNo.getBoundingClientRect();
+            const maxX = containerRect.width - btnRect.width - 20;
+            const maxY = containerRect.height - btnRect.height - 20;
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            btnNo.style.position = 'absolute';
+            btnNo.style.left = newX + 'px';
+            btnNo.style.top = newY + 'px';
+        });
+
+        // Para asegurar que el botón no se salga del contenedor al redimensionar
+        window.addEventListener('resize', function() {
+            // Si el botón está en posición absoluta, lo reubicamos dentro del contenedor
+            if (btnNo.style.position === 'absolute') {
+                const containerRect = document.querySelector('.container').getBoundingClientRect();
+                const btnRect = btnNo.getBoundingClientRect();
+                const maxX = containerRect.width - btnRect.width - 20;
+                const maxY = containerRect.height - btnRect.height - 20;
+                // Si se pasó, lo ajustamos
+                let left = parseFloat(btnNo.style.left) || 0;
+                let top = parseFloat(btnNo.style.top) || 0;
+                if (left > maxX) left = maxX;
+                if (top > maxY) top = maxY;
+                btnNo.style.left = left + 'px';
+                btnNo.style.top = top + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
